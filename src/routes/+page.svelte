@@ -2,29 +2,30 @@
 	import GlobalMap from "./GlobalMap.svelte";
 	import * as Resizable from "$lib/components/ui/resizable/index.js";
 	import SimulationSettings from "./SimulationSettings.svelte";
+	import RangeMap from "./RangeMap.svelte";
 
-  	async function sendRequest() {
+	async function sendRequest() {
 		const paramsObject = {
-		diameter: true,
-		"h-min": 0, 
-		"h-max": 99, 
-		"dist-min": 0,
-		"dist-max": 100, 
-		"v-rel-min": 0,
-		"v-rel-max": 0, 
+			diameter: "true",
+			"h-min": "0",
+			"h-max": "99",
+			"dist-min": "0",
+			"dist-max": "100",
+			"v-rel-min": "0",
+			"v-rel-max": "0",
 		};
 
 		const queryString = `?${new URLSearchParams(paramsObject).toString()}`;
 		const response = await fetch("/api" + queryString);
 
 		console.log(response);
-		if(response.ok) {
+		if (response.ok) {
 			const data = await response.json();
 			console.log(data);
 		} else {
 			console.error("Error:", response.statusText);
 		}
-  	}
+	}
 </script>
 
 <div class="h-screen flex flex-col">
@@ -39,7 +40,7 @@
 				</Resizable.Pane>
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={50}>
-					<GlobalMap />
+					<RangeMap />
 				</Resizable.Pane>
 			</Resizable.PaneGroup>
 		</Resizable.Pane>
