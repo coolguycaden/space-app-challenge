@@ -15,7 +15,6 @@ export const GET: RequestHandler = async  ({ url }) => {
         throw new Error("url provided is not acceptable");
     }
     
-    console.log(apiRequest);
     const response = await fetch(apiRequest);
 
     if(!response.ok){

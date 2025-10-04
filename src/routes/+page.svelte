@@ -8,12 +8,8 @@
 
 	let data: PageData = $props();
     let requestData = data.data.requestData;
-
-    //console.log('hey');
-    //console.log(data);
-    //console.log(requestData);
-    //console.log('hey');
-
+	//let impactResult = impact.result;
+	
 	async function sendRequest() {
 		const paramsObject = {
 			diameter: "true",
@@ -22,19 +18,38 @@
 			"dist-min": "0",
 			"dist-max": "100",
 			"v-rel-min": "0",
-			"v-rel-max": "0",
+			"v-rel-max": "100",
 		};
 
 		const queryString = `?${new URLSearchParams(paramsObject).toString()}`;
 		const response = await fetch("/api" + queryString);
 
-		console.log(response);
 		if (response.ok) {
 			const data = await response.json();
-			console.log(data);
 		} else {
 			console.error("Error:", response.statusText);
 		}
+
+		//impactResult = createImpactRadius(data);
+
+	}
+
+	function createImpactRadius(asteroidSettings) {
+		const {selectedDiameter, selectedVelocity, selectedDensity} = Object.fromEntries(asteroidSettings);
+		
+		const minDensityPercentage = 1;
+		const maxDensityPercentage = 100;
+		const minDensity = 2000;
+		const maxDensity = 3000;
+
+		const density = minDensity + ((selectedDensity - minDensityPercentage) * (maxDensity - minDensity)) / (maxDensityPercentage - minDensityPercentage);
+		const mass = (4/3 * Math.pi) * (selectedDiameter / 2) ** 3 * density;
+		const epilson = 1/2(mass)*(selectedVelocity * 1000);
+		const kappa = epilson / (4.184 *(10 ** 12));
+		const impactZone = 0.07 * 1.3 * kappa;
+		const affectedArea = impactZone * 0.5;
+
+		result = {impactZone, affectedArea};
 	}
 </script>
 
@@ -59,7 +74,8 @@
 			<div class="flex h-full items-center justify-center p-6">
 				<SimulationSettings requestData={requestData}/>
 			</div>
+			<button onclick={sendRequest}> See Impact </button>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
-	<button on:click={sendRequest}> Send Request</button>
+
 </div>

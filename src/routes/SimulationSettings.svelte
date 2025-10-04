@@ -49,8 +49,6 @@
     }
 
     let toggle = $state(false);
-
-    console.log(requestData);
 </script>
 
 <div class="flex flex-col gap-10">
