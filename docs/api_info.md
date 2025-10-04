@@ -6,8 +6,6 @@ body (string) - use Earth for the close-approach body.
 
 h (number) - absolute magnitude 
 
-des (string) - Destination of the asteroid/comet
-
 dist (number) - Distance
 
 dist-min (string) - Min approach dist
