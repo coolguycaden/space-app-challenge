@@ -2,11 +2,23 @@
 	import GlobalMap from "./GlobalMap.svelte";
 	import * as Resizable from "$lib/components/ui/resizable/index.js";
 	import SimulationSettings from "./SimulationSettings.svelte";
+  import GlobalMap from "./GlobalMap.svelte";
 
-	async function f() {
-		const response = await fetch("/api");
-		console.log(response);
-	}
+  async function name() {
+    const paramsObject = {
+      diameter: true, // true
+      "h-min": 0, // 0
+      "h-max": 100, // 100
+      "dist-min": 0, // 0
+      "dist-max": 100, // 100
+      "v-rel-min": 0, // 0
+      "v-rel-max": 0, // 0
+    };
+
+    const queryString = `?${new URLSearchParams(params).toString()}`;
+    const response = await fetch("/api" + queryString);
+    console.log(response);
+  }
 </script>
 
 <div class="h-screen flex flex-col">
