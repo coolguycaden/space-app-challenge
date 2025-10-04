@@ -5,6 +5,7 @@
 	import RangeMap from "./RangeMap.svelte";
 
     import type { PageData } from './$types';
+    import type { Asteroid } from "./proxy+page.server";
 
 	let data: PageData = $props();
     let requestData = data.data.requestData;
@@ -72,7 +73,7 @@
 		<Resizable.Handle withHandle />
 		<Resizable.Pane defaultSize={25}>
 			<div class="flex h-full items-center justify-center p-6">
-				<SimulationSettings requestData={requestData}/>
+				<SimulationSettings asteroids={asteroids}/>
 			</div>
 			<button onclick={sendRequest}> See Impact </button>
 		</Resizable.Pane>
