@@ -1,34 +1,35 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = ({ url }) => {
+export const SDBD_CLOSE_APPROACH_API = 'https://ssd-api.jpl.nasa.gov/cad.api'
+
+export const GET: RequestHandler = async  ({ url }) => {
     
+    // include known diameter and diameter_sigma values
+    // const diameter = true;
+
+    // // limit data to close-approaches to the specified body
+    // const body = "Earth"
+
+    // // Restrict absolute magnitude min / max
+    // const hMin = 1
+    // const hMax = 100
+
+
 
     const params = Object.fromEntries(url.searchParams);
+    
     /*
         diameter - outputs the diameter of the body
-
         body - use Earth for the close-approach body.
-
         h - absolute magnitude 
-
         des - Destination of the asteroid/comet
-
         dist - Distance
-
         dist-min - Min approach dist
-
         dist-max - Max approach dist
-
         v_rel - velocity relative to the apporach body (Earth)
-
         orbit_id - used for the close-approach computation
-
-
-
-
     */
-
 
 
     // const {
@@ -61,7 +62,7 @@ export const GET: RequestHandler = ({ url }) => {
     return new Response(String(params));
 };
 
-// const SDBD_CLOSE_APPROACH_API = 'https://ssd-api.jpl.nasa.gov/cad.api'
+
 
 // // Response request options
 // const REQUEST_OPTIONS = {

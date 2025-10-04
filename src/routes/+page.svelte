@@ -2,8 +2,6 @@
 	import GlobalMap from "./GlobalMap.svelte";
 	import * as Resizable from "$lib/components/ui/resizable/index.js";
 	import SimulationSettings from "./SimulationSettings.svelte";
-  import GlobalMap from "./GlobalMap.svelte";
-
   async function name() {
     const paramsObject = {
       diameter: true, // true
