@@ -1,97 +1,35 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
+const SDBD_CLOSE_APPROACH_API = 'https://ssd-api.jpl.nasa.gov/cad.api'
+
 export const GET: RequestHandler = async  ({ url }) => {
-    
-    // include known diameter and diameter_sigma values
-    // const diameter = true;
-
-    // // limit data to close-approaches to the specified body
-    // const body = "Earth"
-
-    // // Restrict absolute magnitude min / max
-    // const hMin = 1
-    // const hMax = 100
-
-
-
     const params = Object.fromEntries(url.searchParams);
+    const index = url.toString().indexOf('?');
+
+    let apiRequest = SDBD_CLOSE_APPROACH_API;
+
+    if(index !== -1){
+        apiRequest += url.toString().substring(index, url.toString().length);
+    } else {
+        throw new Error("url provided is not acceptable");
+    }
     
-    /*
-        diameter - outputs the diameter of the body
-        body - use Earth for the close-approach body.
-        h - absolute magnitude 
-        des - Destination of the asteroid/comet
-        dist - Distance
-        dist-min - Min approach dist
-        dist-max - Max approach dist
-        v_rel - velocity relative to the apporach body (Earth)
-        orbit_id - used for the close-approach computation
-    */
+    console.log(apiRequest);
+    const response = await fetch(apiRequest);
 
+    if(!response.ok){
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
 
-    // const {
-    //     body, diameter, h, des, dist, 
-    //     'dist-min': distMin, 'dist-max': distMax, v_rel, orbit_id
-    //     } = Object.fromEntries(url.searchParams)
-    // const {count, fields, data}
-
-    // const {
-    //     h,
-    //     'dist-min': distMin,
-    //     'distMax': distMax,
-    //     v_rel,
-    //     orbit_id,
-    // } = params;
-
-    // const hNum = Number(h ?? 0);
-    // const distMinNum = Number(distMin ?? 0);
-    // const distMaxNum = Number(distMax ?? 0);
-    // const v_relNum = Number(v_rel ?? 0);
-    // const orbit_idNum = Number(orbit_id ?? 0);
-
-    // const { 
-    //     body, 
-    //     des = {
-    //         hNum, distMinNum, distMaxNum, v_relNum, orbit_idNum
-    //     } 
-    // } = params;
-
-    return new Response(String(params));
+    const body = await response.json();
+    return new Response(JSON.stringify(body), {
+        status: response.status,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 };
-
-
-
-// // Response request options
-// const REQUEST_OPTIONS = {
-//     method: 'GET',
-//     headers: {
-//         'Authorization': 'any'
-//     },
-
-// };
-
-// //Make the request
-// fetch(SDBD_CLOSE_APPROACH_API, REQUEST_OPTIONS)
-
-//     //Check if response is good
-//     .then(response => {
-//         if(!response.ok) {
-//             throw new Error('Network response was not ok.');
-//         }
-
-//         return response.json();
-//     })
-
-//     //
-//     .then(requestData => {
-//         const {count, fields, data} = requestData;
-//         const {dist, dist_min, dist_max} = data
-//     })
-
-//     .catch(error => {
-//         console.error('Error: ', error)
-//     })
 
 
 
