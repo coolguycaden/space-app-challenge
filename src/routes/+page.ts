@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types'; 
+import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ fetch }) => {
-
-
+export const load: PageLoad = async ({ parent, data }) => {
+    await parent();
+    return data;
 };

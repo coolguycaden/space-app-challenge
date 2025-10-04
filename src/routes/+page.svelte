@@ -1,8 +1,18 @@
-<script>
+<script lang="ts">
 	import GlobalMap from "./GlobalMap.svelte";
 	import * as Resizable from "$lib/components/ui/resizable/index.js";
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
+
+    import type { PageData } from './$types';
+
+	let data: PageData = $props();
+    let requestData = data.data.requestData;
+
+    //console.log('hey');
+    //console.log(data);
+    //console.log(requestData);
+    //console.log('hey');
 
 	async function sendRequest() {
 		const paramsObject = {
@@ -47,7 +57,7 @@
 		<Resizable.Handle withHandle />
 		<Resizable.Pane defaultSize={25}>
 			<div class="flex h-full items-center justify-center p-6">
-				<SimulationSettings />
+				<SimulationSettings requestData={requestData}/>
 			</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
