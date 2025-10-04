@@ -23,7 +23,7 @@ fetch(SDBD_CLOSE_APPROACH_API, REQUEST_OPTIONS)
 
     .then(requestData => {
         const {count, fields, data} = requestData;
-        const {dist, dist_min, dist_max} = data
+        
     })
 
     .catch(error => {
