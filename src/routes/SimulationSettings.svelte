@@ -4,22 +4,16 @@
     import { Slider } from "$lib/components/ui/slider/index.js";
     import { Switch } from "$lib/components/ui/switch/index.js";
     import type { PageData } from './$types';
+    import type { Asteroid } from "./proxy+page.server";
 
 
     let data: PageData = $props();
-    let requestData = data.requestData;
+    let asteroids: Asteroid[] = data.asteroids;
 
-    const countries = [
-        { value: "us", label: "United States" },
-        { value: "canada", label: "Canada" },
-        { value: "eu", label: "European Union" },
-        { value: "russia", label: "Russia" },
-    ];
-
-    let selectedCountry = $state("");
+    let selectedAsteroid = $state("");
     const countryTriggerContent = $derived(
-        countries.find((c) => c.value === selectedCountry)?.label ??
-            "Select a world power",
+        asteroids.find((c) => c.fullname === selectedAsteroid)?.fullname ??
+            "Select an asteroid",
     );
 
     let meteor = $state({
@@ -50,27 +44,25 @@
 
     let toggle = $state(false);
 
-    console.log(requestData);
 </script>
 
 <div class="flex flex-col gap-10">
     <h1>Simulation Options</h1>
 
-    <p>{JSON.stringify(requestData['count'])}</p>
     <div class="flex flex-row gap-10">
-        <p>Play as</p>
-        <Select.Root type="single" name="country" bind:value={selectedCountry}>
+        <p>Select Asteroid</p>
+        <Select.Root type="single" name="asteroid" bind:value={selectedAsteroid}>
             <Select.Trigger class="w-[180px]">
                 {countryTriggerContent}
             </Select.Trigger>
             <Select.Content>
                 <Select.Group>
-                    {#each countries as country (country.value)}
+                    {#each asteroids as asteroid (asteroid.fullname)}
                         <Select.Item
-                            value={country.value}
-                            label={country.label}
+                            value={asteroid.fullname}
+                            label={asteroid.fullname}
                         >
-                            {country.label}
+                            {asteroid.fullname}
                         </Select.Item>
                     {/each}
                 </Select.Group>
