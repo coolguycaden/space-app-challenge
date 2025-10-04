@@ -1,8 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const SDBD_CLOSE_APPROACH_API = 'https://ssd-api.jpl.nasa.gov/cad.api'
-
 export const GET: RequestHandler = async  ({ url }) => {
     
     // include known diameter and diameter_sigma values
