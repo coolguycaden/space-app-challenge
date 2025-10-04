@@ -18,10 +18,8 @@ v_rel (number) - velocity relative to the apporach body (Earth)
 
 orbit_id (number) - used for the close-approach computation
 
-pha (boolean) - Potential Hazardous Asteroids
+neo (boolean) - Near Earth Objects, has 53 objects
 
 ### Optional Parameters
 fullname - if we want to display the asteroids name
-
-neo (boolean) - If we need extra data 
 
