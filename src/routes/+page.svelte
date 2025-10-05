@@ -4,13 +4,15 @@
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
 
-    import type { PageData } from './$types';
-    import type { Asteroid } from "./proxy+page.server";
+	import type { PageData } from "./$types";
+	import type { Asteroid } from "./proxy+page.server";
 
 	let data: PageData = $props();
-    let requestData = data.data.requestData;
+	let requestData = data.data.requestData;
 	//let impactResult = impact.result;
-	
+
+	const asteroids = [];
+
 	async function sendRequest() {
 		const paramsObject = {
 			diameter: "true",
@@ -32,25 +34,29 @@
 		}
 
 		//impactResult = createImpactRadius(data);
-
 	}
 
 	function createImpactRadius(asteroidSettings) {
-		const {selectedDiameter, selectedVelocity, selectedDensity} = Object.fromEntries(asteroidSettings);
-		
+		const { selectedDiameter, selectedVelocity, selectedDensity } =
+			Object.fromEntries(asteroidSettings);
+
 		const minDensityPercentage = 1;
 		const maxDensityPercentage = 100;
 		const minDensity = 2000;
 		const maxDensity = 3000;
 
-		const density = minDensity + ((selectedDensity - minDensityPercentage) * (maxDensity - minDensity)) / (maxDensityPercentage - minDensityPercentage);
-		const mass = (4/3 * Math.pi) * (selectedDiameter / 2) ** 3 * density;
-		const epilson = 1/2(mass)*(selectedVelocity * 1000);
-		const kappa = epilson / (4.184 *(10 ** 12));
+		const density =
+			minDensity +
+			((selectedDensity - minDensityPercentage) *
+				(maxDensity - minDensity)) /
+				(maxDensityPercentage - minDensityPercentage);
+		const mass = (4 / 3) * Math.pi * (selectedDiameter / 2) ** 3 * density;
+		const epilson = (1 / 2(mass)) * (selectedVelocity * 1000);
+		const kappa = epilson / (4.184 * 10 ** 12);
 		const impactZone = 0.07 * 1.3 * kappa;
 		const affectedArea = impactZone * 0.5;
 
-		result = {impactZone, affectedArea};
+		result = { impactZone, affectedArea };
 	}
 </script>
 
@@ -73,10 +79,9 @@
 		<Resizable.Handle withHandle />
 		<Resizable.Pane defaultSize={25}>
 			<div class="flex h-full items-center justify-center p-6">
-				<SimulationSettings asteroids={asteroids}/>
+				<SimulationSettings {asteroids} />
 			</div>
 			<button onclick={sendRequest}> See Impact </button>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
-
 </div>
