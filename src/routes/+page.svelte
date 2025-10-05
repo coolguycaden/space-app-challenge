@@ -4,6 +4,8 @@
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
 
+	  import { Button } from "$lib/components/ui/button/index.js";
+
 	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
     import ResizablePaneGroup from "$lib/components/ui/resizable/resizable-pane-group.svelte";
@@ -11,42 +13,14 @@
 
 	let { data }: PageProps = $props();
 	let asteroids: Asteroid[] = data.asteroids;
-
-	let name = $state('');
-	let size = $state('');
-	let location = $state('');
-	let summary = $state('');
-	let isLoading = $state(false);
-	let impactResult = $state({});
-
-	async function sendRequest() {
-		const paramsObject = {
-			diameter: "true",
-			"h-min": "0",
-			"h-max": "99",
-			"dist-min": "0",
-			"dist-max": "100",
-			"v-rel-min": "0",
-			"v-rel-max": "100",
-		};
-
-		const queryString = `?${new URLSearchParams(paramsObject).toString()}`;
-		const response = await fetch("/api/close_approach" + queryString);
-
-		if (response.ok) {
-			const data = await response.json();
-		} else {
-			console.error("Error:", response.statusText);
-		}
-
-		impactResult = createImpactRadius(data);
-		getAsteroidDamage(impactResult)
-	}
-
-
-	function createImpactRadius(asteroidSettings) {
-		const { selectedDiameter, selectedVelocity, selectedDensity } =
-			Object.fromEntries(asteroidSettings);
+let initialImpact = $state(null);
+	let affectedArea = $state(null);
+	
+	function createImpactRadius() {
+		const asteroid = asteroids[0];
+		const selectedDensity = 2000;
+		const selectedDiameter = asteroid.diameter;
+		const selectedVelocity = asteroid.velocity;
 
 		const minDensityPercentage = 1;
 		const maxDensityPercentage = 100;
@@ -101,7 +75,12 @@
 			isLoading = false;
 		}
 	}
+
+	const impactResult = createImpactRadius();
+	initialImpact = impactResult.initialImpact;
+	affectedArea = impactResult.affectedArea;
 </script>
+
 
 <div class="h-screen flex flex-col">
 	<Resizable.PaneGroup
@@ -116,13 +95,14 @@
 				</Resizable.Pane>
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={50}>
-					<RangeMap />
+					<RangeMap bind:initialImpact bind:affectedArea/>
 				</Resizable.Pane>
 			</Resizable.PaneGroup>
 
 		</Resizable.Pane>
 		
 		<Resizable.Handle withHandle />
+<<<<<<< HEAD
 		
 		<Resizable.Pane defaultSize={40}>
 
@@ -144,6 +124,12 @@
 				</Resizable.Pane>
 				
 			</Resizable.PaneGroup>
+=======
+		<Resizable.Pane defaultSize={25}>
+			<div class="flex h-full items-center justify-center p-6">
+				<SimulationSettings {asteroids} />
+			</div>
+>>>>>>> 80f200c (Fix get asteroid data for drawing)
 		</Resizable.Pane>
 		
 

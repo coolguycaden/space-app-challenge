@@ -4,34 +4,36 @@
 		NavigationControl,
 		ScaleControl,
 		GeoJSONSource,
-		CircleLayer
+		CircleLayer,
 	} from "svelte-maplibre-gl";
 
-	let impactPoint;
-	const circleRadius = 100;	
-	let showImpact = $state(false);
+	let impactPoint = $state({lat: 40.7,lng: 74});
+	const circleRadius = 100;
 
 	//This should be turned into a variable based on user settings
-	const metersToPixels = 0.0001;
-	const tempMeters = 10000;
-	let initalImpact = metersToPixels * tempMeters;
+	const metersToPixels = 0.01;
 
+	let {initialImpact = $bindable(), affectedArea = $bindable()} = $props();
+
+	$effect(() => {
+		console.log(initialImpact);
+		console.log(affectedArea);
+	});
+	 
 	function setImpactPoint(event) {
 		const lngLat = event.lngLat;
 		impactPoint = {
-			type: 'Feature',
+			type: "Feature",
 			geometry: {
-				type: 'Point',
-				coordinates: [lngLat.lng, lngLat.lat]
+				type: "Point",
+				coordinates: [lngLat.lng, lngLat.lat],
 			},
 			properties: {
 				radius: circleRadius,
-				color: 'red'
-			}
+				color: "red",
+			},
 		};
-		showImpact = !showImpact;
 	}
-
 </script>
 
 <MapLibre
@@ -42,36 +44,42 @@
 	id="map"
 	onclick={(e) => setImpactPoint(e)}
 >
-		
 	<NavigationControl />
 	<ScaleControl />
 
-		
-		{#if showImpact}
-			<GeoJSONSource
-				data={{
-					"type": "FeatureCollection",
-					"features": [impactPoint]
+	{#if impactPoint}
+	<GeoJSONSource
+		data={{
+			type: "FeatureCollection",
+			features: [impactPoint],
+		}}
+	>
+		{#if initialImpact}
+			<CircleLayer
+				id="impact-circle"
+				paint={{
+					"circle-radius": [
+						"/",
+						["get", "radius"],
+						initialImpact * metersToPixels,
+					],
+					"circle-color": ["get", "color"],
+					"circle-opacity": 0.6,
 				}}
-			>
-				<CircleLayer
-					id="impact-circle"
-					paint={{
-						
-						'circle-radius': ['*', ['get', 'radius'], initalImpact], 
-						'circle-color': ['get', 'color'],
-						'circle-opacity': 0.6,
-					}}
-				/>
+				filter={['==', '$type', 'Point']}
+			/>
+		{/if}
 
-				<CircleLayer
+		{#if affectedArea}
+			<CircleLayer
 				id="affected-area"
 				paint={{
-					'circle-radius': ['*', ['get', 'radius'], affectedArea],
-					'circle-color': ['get', 'color'],
-					'circle-opacity': 0.3,
-					}}
-				/>
-			</GeoJSONSource>
+					"circle-radius": ["*", ["get", "radius"], metersToPixels * affectedArea],
+					"circle-color": ["get", "color"],
+					"circle-opacity": 0.3,
+				}}
+			/>
 		{/if}
+	</GeoJSONSource>
+	{/if}
 </MapLibre>
