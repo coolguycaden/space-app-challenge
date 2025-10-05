@@ -14,7 +14,7 @@
 	//This should be turned into a variable based on user settings
 	const metersToPixels = 0.0001;
 	const tempMeters = 10000;
-	const initalImpact = metersToPixels * tempMeters;
+	let initalImpact = metersToPixels * tempMeters;
 
 	function setImpactPoint(event) {
 		const lngLat = event.lngLat;
@@ -61,6 +61,15 @@
 						'circle-radius': ['*', ['get', 'radius'], initalImpact], 
 						'circle-color': ['get', 'color'],
 						'circle-opacity': 0.6,
+					}}
+				/>
+
+				<CircleLayer
+				id="affected-area"
+				paint={{
+					'circle-radius': ['*', ['get', 'radius'], affectedArea],
+					'circle-color': ['get', 'color'],
+					'circle-opacity': 0.3,
 					}}
 				/>
 			</GeoJSONSource>

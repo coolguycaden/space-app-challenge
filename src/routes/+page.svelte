@@ -8,10 +8,10 @@
 	import type { Asteroid } from "./proxy+page.server";
 
 	let data: PageData = $props();
-	let requestData = data.data.requestData;
+	let requestData = data.requestData;
 	//let impactResult = impact.result;
 
-	const asteroids = [];
+	const asteroids: Asteroid[] = [];
 
 	async function sendRequest() {
 		const paramsObject = {
@@ -50,13 +50,13 @@
 			((selectedDensity - minDensityPercentage) *
 				(maxDensity - minDensity)) /
 				(maxDensityPercentage - minDensityPercentage);
-		const mass = (4 / 3) * Math.pi * (selectedDiameter / 2) ** 3 * density;
-		const epilson = (1 / 2(mass)) * (selectedVelocity * 1000);
+		const mass = (4 / 3) * Math.PI * (selectedDiameter / 2) ** 3 * density;
+		const epilson = 0.5 *  mass * ((selectedVelocity * 1000) ** 2);
 		const kappa = epilson / (4.184 * 10 ** 12);
 		const initialImpact = 0.07 * 1.3 * kappa;
 		const affectedArea = initialImpact * 1.5;
 
-		result = { initialImpact, affectedArea };
+		return { initialImpact, affectedArea };
 	}
 </script>
 
