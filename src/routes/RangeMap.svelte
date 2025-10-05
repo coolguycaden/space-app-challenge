@@ -64,18 +64,5 @@
 					}}
 				/>
 			</GeoJSONSource>
-		{:else}
-			<GeoJSONSource
-				data="https://maplibre.org/maplibre-gl-js/docs/assets/earthquakes.geojson"
-			>
-				<CircleLayer
-					filter={['has', 'point_count']}
-					paint={{
-						'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 50, '#f1f075', 150, '#f28cb1'],
-						'circle-radius': ['+', 10, ['sqrt', ['get', 'point_count']]],
-						'circle-opacity': 0.8
-					}}
-				/>
-			</GeoJSONSource>
 		{/if}
 </MapLibre>

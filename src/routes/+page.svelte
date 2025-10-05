@@ -54,7 +54,7 @@
 		const epilson = (1 / 2(mass)) * (selectedVelocity * 1000);
 		const kappa = epilson / (4.184 * 10 ** 12);
 		const initialImpact = 0.07 * 1.3 * kappa;
-		const affectedArea = initialImpact * 0.5;
+		const affectedArea = initialImpact * 1.5;
 
 		result = { initialImpact, affectedArea };
 	}
