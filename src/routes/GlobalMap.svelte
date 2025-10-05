@@ -91,22 +91,22 @@
 			this.renderer!.render(this.scene, this.camera);
 			this.map!.triggerRepaint();
 
-			setInterval(() => {
-				modelAltitude += 0.1;
-
-				const modelMatrix = this.map!.transform.getMatrixForModel(
-					this.modelOrigin!,
-					modelAltitude,
-				);
-				const l = new THREE.Matrix4()
-					.fromArray(modelMatrix)
-					.scale(new THREE.Vector3(scaling, scaling, scaling));
-
-				console.log(m);
-				this.camera.projectionMatrix = m.multiply(l);
-				this.renderer!.render(this.scene, this.camera);
-				this.map!.triggerRepaint();
-			}, 1000); // 60 repaints/sec
+			// setInterval(() => {
+			// 	modelAltitude += 0.1;
+			//
+			// 	const modelMatrix = this.map!.transform.getMatrixForModel(
+			// 		this.modelOrigin!,
+			// 		modelAltitude,
+			// 	);
+			// 	const l = new THREE.Matrix4()
+			// 		.fromArray(modelMatrix)
+			// 		.scale(new THREE.Vector3(scaling, scaling, scaling));
+			//
+			// 	console.log(m);
+			// 	this.camera.projectionMatrix = m.multiply(l);
+			// 	this.renderer!.render(this.scene, this.camera);
+			// 	this.map!.triggerRepaint();
+			// }, 1000); // 60 repaints/sec
 		}
 	}
 
