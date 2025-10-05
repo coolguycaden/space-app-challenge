@@ -53,10 +53,10 @@
 		const mass = (4 / 3) * Math.pi * (selectedDiameter / 2) ** 3 * density;
 		const epilson = (1 / 2(mass)) * (selectedVelocity * 1000);
 		const kappa = epilson / (4.184 * 10 ** 12);
-		const impactZone = 0.07 * 1.3 * kappa;
-		const affectedArea = impactZone * 0.5;
+		const initialImpact = 0.07 * 1.3 * kappa;
+		const affectedArea = initialImpact * 0.5;
 
-		result = { impactZone, affectedArea };
+		result = { initialImpact, affectedArea };
 	}
 </script>
 

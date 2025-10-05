@@ -12,8 +12,9 @@
 	let showImpact = $state(false);
 
 	//This should be turned into a variable based on user settings
-	const initalImpact = 1;
-
+	const metersToPixels = 0.0001;
+	const tempMeters = 10000;
+	const initalImpact = metersToPixels * tempMeters;
 
 	function setImpactPoint(event) {
 		const lngLat = event.lngLat;
