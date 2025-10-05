@@ -9,7 +9,6 @@
 
 
     let { asteroids }: { asteroid: Asteroid[] } = $props();
-    
     let selectedAsteroidName = $state("");
     const countryTriggerContent = $derived(
         asteroids.find((c) => c.fullname === selectedAsteroidName)?.fullname ??
