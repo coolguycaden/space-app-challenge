@@ -7,17 +7,25 @@
 		CircleLayer
 	} from "svelte-maplibre-gl";
 
+	let { selectedDiameter, onMapClick }: {
+		selectedDiameter: number;
+		onMapClick: (coords: { lng: number; lat: number }) => void;
+	} = $props();
+
 	let impactPoint;
-	const circleRadius = 100;	
 	let showImpact = $state(false);
 
-	//This should be turned into a variable based on user settings
-	const metersToPixels = 0.0001;
-	const tempMeters = 10000;
-	let initalImpact = metersToPixels * tempMeters;
-
 	function setImpactPoint(event) {
+		if (selectedDiameter === 0) {
+			alert("Please select an asteroid.");
+			return;
+		}
+
 		const lngLat = event.lngLat;
+		onMapClick(lngLat);
+		
+		const pixelRadius = selectedDiameter / 20;
+
 		impactPoint = {
 			type: 'Feature',
 			geometry: {
@@ -25,7 +33,7 @@
 				coordinates: [lngLat.lng, lngLat.lat]
 			},
 			properties: {
-				radius: circleRadius,
+				radius: pixelRadius,
 				color: 'red'
 			}
 		};
@@ -57,19 +65,9 @@
 				<CircleLayer
 					id="impact-circle"
 					paint={{
-						
-						'circle-radius': ['*', ['get', 'radius'], initalImpact], 
+						'circle-radius': ['get', 'radius'],
 						'circle-color': ['get', 'color'],
-						'circle-opacity': 0.6,
-					}}
-				/>
-
-				<CircleLayer
-				id="affected-area"
-				paint={{
-					'circle-radius': ['*', ['get', 'radius'], affectedArea],
-					'circle-color': ['get', 'color'],
-					'circle-opacity': 0.3,
+						'circle-opacity': 0.6
 					}}
 				/>
 			</GeoJSONSource>

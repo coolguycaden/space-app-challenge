@@ -14,10 +14,21 @@
 
 	let name = $state('');
 	let size = $state('');
-	let location = $state('');
+	let location = $state();
 	let summary = $state('');
 	let isLoading = $state(false);
 	let impactResult = $state({});
+	let selectedDiameter = $state(0);
+
+	function handleAsteroidChange(asteroid: Asteroid) {
+		name = asteroid.fullname;
+		size = `${asteroid.diameter.toFixed(2)} meters`;
+		selectedDiameter = asteroid.diameter;
+	}
+
+	function handleMapClick(coords: { lng: number; lat: number }) {
+		location = `Lng: ${coords.lng.toFixed(4)}, Lat: ${coords.lat.toFixed(4)}`;
+	}
 
 	async function sendRequest() {
 		const paramsObject = {
@@ -116,7 +127,10 @@
 				</Resizable.Pane>
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={50}>
-					<RangeMap />
+					<RangeMap 
+						selectedDiameter={selectedDiameter}
+						onMapClick={handleMapClick}
+					/>
 				</Resizable.Pane>
 			</Resizable.PaneGroup>
 

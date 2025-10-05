@@ -55,7 +55,7 @@
             </Select.Content>
         </Select.Root>
     </div>
-    <p>Asterid Stats</p>
+    <p>Asteroid Stats</p>
     <p>Velocity: {selectedAsteroid.velocity}</p>
     <p>Diameter: {selectedAsteroid.diameter}</p>
     <div class="flex flex-row gap-10">
