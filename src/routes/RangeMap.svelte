@@ -8,12 +8,27 @@
 	} from "svelte-maplibre-gl";
 
 	let impactPoint;
-	type PointFeature = GeoJSON.Feature<GeoJSON.Point, { radius: number; color: string }>;
-	
+	const circleRadius = 100;	
+	let showImpact = $state(false);
+
+	//This should be turned into a variable based on user settings
+	const initalImpact = 1;
+
 
 	function setImpactPoint(event) {
-		impactPoint = `${JSON.stringify(event.point)}`;
-		console.log(impactPoint);
+		const lngLat = event.lngLat;
+		impactPoint = {
+			type: 'Feature',
+			geometry: {
+				type: 'Point',
+				coordinates: [lngLat.lng, lngLat.lat]
+			},
+			properties: {
+				radius: circleRadius,
+				color: 'red'
+			}
+		};
+		showImpact = !showImpact;
 	}
 
 </script>
@@ -29,4 +44,37 @@
 		
 	<NavigationControl />
 	<ScaleControl />
+
+		
+		{#if showImpact}
+			<GeoJSONSource
+				data={{
+					"type": "FeatureCollection",
+					"features": [impactPoint]
+				}}
+			>
+				<CircleLayer
+					id="impact-circle"
+					paint={{
+						
+						'circle-radius': ['*', ['get', 'radius'], initalImpact], 
+						'circle-color': ['get', 'color'],
+						'circle-opacity': 0.6,
+					}}
+				/>
+			</GeoJSONSource>
+		{:else}
+			<GeoJSONSource
+				data="https://maplibre.org/maplibre-gl-js/docs/assets/earthquakes.geojson"
+			>
+				<CircleLayer
+					filter={['has', 'point_count']}
+					paint={{
+						'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 50, '#f1f075', 150, '#f28cb1'],
+						'circle-radius': ['+', 10, ['sqrt', ['get', 'point_count']]],
+						'circle-opacity': 0.8
+					}}
+				/>
+			</GeoJSONSource>
+		{/if}
 </MapLibre>
