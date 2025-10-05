@@ -37,8 +37,10 @@
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.14",
+		"@types/three": "^0.180.0",
 		"maplibre-gl": "^5.8.0",
 		"svelte-maplibre-gl": "^1.0.1",
-		"tailwindcss": "^4.1.14"
+		"tailwindcss": "^4.1.14",
+		"three": "^0.180.0"
 	}
 }

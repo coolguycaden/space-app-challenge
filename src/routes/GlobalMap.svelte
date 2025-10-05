@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { Tween } from "svelte/motion";
+	import * as THREE from "three";
+	import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-	import { MapLibre, Projection, Light, Sky } from "svelte-maplibre-gl";
+	import {
+		MapLibre,
+		Projection,
+		Light,
+		Sky,
+		CustomLayer,
+	} from "svelte-maplibre-gl";
 
 	let thetaDeg = new Tween(0);
 	let p = $derived(
@@ -21,10 +29,92 @@
 	$effect(() => {
 		return () => clearInterval(interval);
 	});
+
+	class CustomLayerImpl
+		implements Omit<maplibregl.CustomLayerInterface, "id" | "type">
+	{
+		renderingMode = "3d" as const;
+		private camera = new THREE.Camera();
+		private scene = new THREE.Scene();
+		private renderer: THREE.WebGLRenderer | null = null;
+		private map: maplibregl.Map | null = null;
+		private modelOrigin: [number, number] | null = null;
+
+		constructor(modelOrigin: [number, number]) {
+			this.modelOrigin = modelOrigin;
+		}
+
+		onAdd(map: maplibregl.Map, gl: WebGL2RenderingContext) {
+			this.map = map;
+
+			const directionalLight1 = new THREE.DirectionalLight(0xffffff);
+			directionalLight1.position.set(0, -70, 100).normalize();
+			this.scene.add(directionalLight1);
+
+			const directionalLight2 = new THREE.DirectionalLight(0xffffff);
+			directionalLight2.position.set(0, 70, 100).normalize();
+			this.scene.add(directionalLight2);
+
+			const loader = new GLTFLoader();
+			loader.load("/asteroid.glb", (gltf) => {
+				this.scene.add(gltf.scene);
+			});
+
+			this.renderer = new THREE.WebGLRenderer({
+				canvas: map.getCanvas(),
+				context: gl,
+				antialias: true,
+			});
+			this.renderer.autoClear = false;
+		}
+
+		render(
+			_gl: WebGL2RenderingContext | WebGLRenderingContext,
+			args: maplibregl.CustomRenderMethodInput,
+		) {
+			let modelAltitude = 0;
+			const scaling = 1000;
+
+			const modelMatrix = this.map!.transform.getMatrixForModel(
+				this.modelOrigin!,
+				modelAltitude,
+			);
+			const m = new THREE.Matrix4().fromArray(
+				args.defaultProjectionData.mainMatrix,
+			);
+			const l = new THREE.Matrix4()
+				.fromArray(modelMatrix)
+				.scale(new THREE.Vector3(scaling, scaling, scaling));
+
+			this.camera.projectionMatrix = m.multiply(l);
+			this.renderer!.resetState();
+			this.renderer!.render(this.scene, this.camera);
+			this.map!.triggerRepaint();
+
+			setInterval(() => {
+				modelAltitude += 0.1;
+
+				const modelMatrix = this.map!.transform.getMatrixForModel(
+					this.modelOrigin!,
+					modelAltitude,
+				);
+				const l = new THREE.Matrix4()
+					.fromArray(modelMatrix)
+					.scale(new THREE.Vector3(scaling, scaling, scaling));
+
+				console.log(m);
+				this.camera.projectionMatrix = m.multiply(l);
+				this.renderer!.render(this.scene, this.camera);
+				this.map!.triggerRepaint();
+			}, 1000); // 60 repaints/sec
+		}
+	}
+
+	const customLayerImpl = new CustomLayerImpl([148.9819, -35.39847]);
 </script>
 
 <MapLibre
-	class="h-full"
+	class="h-full bg-black"
 	style={{
 		version: 8,
 		sources: {
@@ -60,6 +150,7 @@
 			0,
 		]}
 	/>
+	<CustomLayer implementation={customLayerImpl} />
 
 	<Projection type="globe" />
 </MapLibre>
