@@ -51,7 +51,6 @@
 		}
 
 		impactResult = createImpactRadius(data);
-		getAsteroidDamage(impactResult)
 	}
 
 
@@ -84,7 +83,7 @@
 	
 	async function getAsteroidDamage() {
 		isLoading = true;
-		
+		console.log(name + size + location);
 		try {
 			const response = await fetch('/api/info_bot', {
 				method: 'POST',
@@ -152,7 +151,7 @@
 						
 					</div>
 				</Resizable.Pane>
-				<button onclick={sendRequest}> See Impact Results</button>
+				<button onclick={getAsteroidDamage}> See Impact Results</button>
 				<br>
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={20}>
