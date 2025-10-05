@@ -14,7 +14,7 @@
 
 	let name = $state('');
 	let size = $state('');
-	let location = $state();
+	let location = $state('');
 	let summary = $state('');
 	let isLoading = $state(false);
 	let impactResult = $state({});
@@ -24,6 +24,7 @@
 		name = asteroid.fullname;
 		size = `${asteroid.diameter.toFixed(2)} meters`;
 		selectedDiameter = asteroid.diameter;
+		console.log(selectedDiameter);
 	}
 
 	function handleMapClick(coords: { lng: number; lat: number }) {
@@ -144,7 +145,10 @@
 
 				<Resizable.Pane defaultSize={20}>
 					<div class="flex h-full items-center justify-center p-6">
-						<SimulationSettings {asteroids} />
+						<SimulationSettings 
+							{asteroids} 
+							onAsteroidChange={handleAsteroidChange}
+						/>
 						
 					</div>
 				</Resizable.Pane>
