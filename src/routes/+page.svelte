@@ -6,10 +6,19 @@
 
 	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
+    import ResizablePaneGroup from "$lib/components/ui/resizable/resizable-pane-group.svelte";
+    import ImpactInfo from "./ImpactInfo.svelte";
 
 	let { data }: PageProps = $props();
 	let asteroids: Asteroid[] = data.asteroids;
-	
+
+	let name = $state('');
+	let size = $state('');
+	let location = $state('');
+	let summary = $state('');
+	let isLoading = $state(false);
+	let impactResult = $state({});
+
 	async function sendRequest() {
 		const paramsObject = {
 			diameter: "true",
@@ -22,7 +31,7 @@
 		};
 
 		const queryString = `?${new URLSearchParams(paramsObject).toString()}`;
-		const response = await fetch("/api" + queryString);
+		const response = await fetch("/api/close_approach" + queryString);
 
 		if (response.ok) {
 			const data = await response.json();
@@ -30,8 +39,10 @@
 			console.error("Error:", response.statusText);
 		}
 
-		//impactResult = createImpactRadius(data);
+		impactResult = createImpactRadius(data);
+		getAsteroidDamage(impactResult)
 	}
+
 
 	function createImpactRadius(asteroidSettings) {
 		const { selectedDiameter, selectedVelocity, selectedDensity } =
@@ -53,7 +64,42 @@
 		const initialImpact = 0.07 * 1.3 * kappa;
 		const affectedArea = initialImpact * 1.5;
 
-		return { initialImpact, affectedArea };
+		return { 
+			initialImpact: initialImpact,
+			affectedArea: affectedArea,
+		};
+	}
+
+	
+	async function getAsteroidDamage() {
+		isLoading = true;
+
+		try {
+			const response = await fetch('/api/info_bot', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					name: name,
+					size: size,
+					location: location
+				})
+			});
+
+			if(!response.ok) {
+				throw new Error(`An error occured: ${response.statusText}`);
+			}
+
+			const impactText = await response.text();
+			summary = impactText;
+
+		} catch (e) {
+			console.error(e);
+
+		} finally {
+			isLoading = false;
+		}
 	}
 </script>
 
@@ -63,6 +109,7 @@
 		class="w-full rounded-lg border"
 	>
 		<Resizable.Pane defaultSize={75}>
+
 			<Resizable.PaneGroup direction="vertical">
 				<Resizable.Pane defaultSize={50}>
 					<GlobalMap />
@@ -72,13 +119,33 @@
 					<RangeMap />
 				</Resizable.Pane>
 			</Resizable.PaneGroup>
+
 		</Resizable.Pane>
+		
 		<Resizable.Handle withHandle />
-		<Resizable.Pane defaultSize={25}>
-			<div class="flex h-full items-center justify-center p-6">
-				<SimulationSettings {asteroids} />
-			</div>
-			<button onclick={sendRequest}> See Impact </button>
+		
+		<Resizable.Pane defaultSize={40}>
+
+			<Resizable.PaneGroup direction="vertical">
+
+				<Resizable.Pane defaultSize={20}>
+					<div class="flex h-full items-center justify-center p-6">
+						<SimulationSettings {asteroids} />
+						
+					</div>
+				</Resizable.Pane>
+				<button onclick={sendRequest}> See Impact Results</button>
+				<br>
+				<Resizable.Handle withHandle />
+				<Resizable.Pane defaultSize={20}>
+					<div class="flex h-full items-center justify-center p-6">
+						<ImpactInfo />
+					</div>
+				</Resizable.Pane>
+				
+			</Resizable.PaneGroup>
 		</Resizable.Pane>
+		
+
 	</Resizable.PaneGroup>
 </div>
