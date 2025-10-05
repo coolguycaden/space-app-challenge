@@ -23,6 +23,8 @@
 				180,
 	);
 
+	let { coord = $bindable() } = $props();
+
 	const interval = setInterval(() => {
 		thetaDeg.set(thetaDeg.current + 0.5);
 	}, 500);
@@ -39,6 +41,8 @@
 		private renderer: THREE.WebGLRenderer | null = null;
 		private map: maplibregl.Map | null = null;
 		private modelOrigin: [number, number] | null = null;
+		private modelAltitude = 10000000;
+		private animationInterval: number | null = null;
 
 		constructor(modelOrigin: [number, number]) {
 			this.modelOrigin = modelOrigin;
@@ -46,7 +50,6 @@
 
 		onAdd(map: maplibregl.Map, gl: WebGL2RenderingContext) {
 			this.map = map;
-
 			const directionalLight1 = new THREE.DirectionalLight(0xffffff);
 			directionalLight1.position.set(0, -70, 100).normalize();
 			this.scene.add(directionalLight1);
@@ -66,18 +69,25 @@
 				antialias: true,
 			});
 			this.renderer.autoClear = false;
+
+			this.animationInterval = window.setInterval(() => {
+				this.modelAltitude -= 100000;
+				this.map!.triggerRepaint();
+
+				if (this.animationInterval && this.modelAltitude === 0) {
+					window.clearInterval(this.animationInterval);
+				}
+			}, 1000 / 30); // 30 fps
 		}
 
 		render(
 			_gl: WebGL2RenderingContext | WebGLRenderingContext,
 			args: maplibregl.CustomRenderMethodInput,
 		) {
-			let modelAltitude = 0;
-			const scaling = 1000;
-
+			const scaling = 100;
 			const modelMatrix = this.map!.transform.getMatrixForModel(
 				this.modelOrigin!,
-				modelAltitude,
+				this.modelAltitude,
 			);
 			const m = new THREE.Matrix4().fromArray(
 				args.defaultProjectionData.mainMatrix,
@@ -89,28 +99,16 @@
 			this.camera.projectionMatrix = m.multiply(l);
 			this.renderer!.resetState();
 			this.renderer!.render(this.scene, this.camera);
-			this.map!.triggerRepaint();
+		}
 
-			// setInterval(() => {
-			// 	modelAltitude += 0.1;
-			//
-			// 	const modelMatrix = this.map!.transform.getMatrixForModel(
-			// 		this.modelOrigin!,
-			// 		modelAltitude,
-			// 	);
-			// 	const l = new THREE.Matrix4()
-			// 		.fromArray(modelMatrix)
-			// 		.scale(new THREE.Vector3(scaling, scaling, scaling));
-			//
-			// 	console.log(m);
-			// 	this.camera.projectionMatrix = m.multiply(l);
-			// 	this.renderer!.render(this.scene, this.camera);
-			// 	this.map!.triggerRepaint();
-			// }, 1000); // 60 repaints/sec
+		onRemove() {
+			if (this.animationInterval !== null) {
+				window.clearInterval(this.animationInterval);
+			}
 		}
 	}
 
-	const customLayerImpl = new CustomLayerImpl([148.9819, -35.39847]);
+	const customLayerImpl = $derived(new CustomLayerImpl(coord));
 </script>
 
 <MapLibre
@@ -134,22 +132,23 @@
 			},
 		],
 	}}
-	zoom={1.5}
+	zoom={1}
+	center={{ lng: -73.9, lat: 40.7 }}
 >
-	<Light anchor="map" position={[100, a, p]} />
-	<Sky
-		atmosphere-blend={[
-			"interpolate",
-			["linear"],
-			["zoom"],
-			0,
-			1,
-			5,
-			1,
-			7,
-			0,
-		]}
-	/>
+	<!-- <Light anchor="map" position={[100, a, p]} /> -->
+	<!-- <Sky -->
+	<!-- 	atmosphere-blend={[ -->
+	<!-- 		"interpolate", -->
+	<!-- 		["linear"], -->
+	<!-- 		["zoom"], -->
+	<!-- 		0, -->
+	<!-- 		1, -->
+	<!-- 		5, -->
+	<!-- 		1, -->
+	<!-- 		7, -->
+	<!-- 		0, -->
+	<!-- 	]} -->
+	<!-- /> -->
 	<CustomLayer implementation={customLayerImpl} />
 
 	<Projection type="globe" />
