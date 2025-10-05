@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex flex-col gap-10">
-    <h1>Impact Summary</h1>
+    <h1 class="font-bold">Impact Summary</h1>
 
     <div class="flex flex-row gap-10">
         <p>{impactSummary}</p>

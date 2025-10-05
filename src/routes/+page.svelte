@@ -6,16 +6,15 @@
 
 	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
-    import ResizablePaneGroup from "$lib/components/ui/resizable/resizable-pane-group.svelte";
-    import ImpactInfo from "./ImpactInfo.svelte";
+	import ImpactInfo from "./ImpactInfo.svelte";
 
 	let { data }: PageProps = $props();
 	let asteroids: Asteroid[] = data.asteroids;
 
-	let name = $state('');
-	let size = $state('');
-	let location = $state('');
-	let summary = $state('');
+	let name = $state("");
+	let size = $state("");
+	let location = $state("");
+	let summary = $state("");
 	let isLoading = $state(false);
 	let impactResult = $state({});
 	let selectedDiameter = $state(0);
@@ -53,7 +52,6 @@
 		impactResult = createImpactRadius(data);
 	}
 
-
 	function createImpactRadius(asteroidSettings) {
 		const { selectedDiameter, selectedVelocity, selectedDensity } =
 			Object.fromEntries(asteroidSettings);
@@ -69,50 +67,51 @@
 				(maxDensity - minDensity)) /
 				(maxDensityPercentage - minDensityPercentage);
 		const mass = (4 / 3) * Math.PI * (selectedDiameter / 2) ** 3 * density;
-		const epilson = 0.5 *  mass * ((selectedVelocity * 1000) ** 2);
+		const epilson = 0.5 * mass * (selectedVelocity * 1000) ** 2;
 		const kappa = epilson / (4.184 * 10 ** 12);
 		const initialImpact = 0.07 * 1.3 * kappa;
 		const affectedArea = initialImpact * 1.5;
 
-		return { 
+		return {
 			initialImpact: initialImpact,
 			affectedArea: affectedArea,
 		};
 	}
 
-	
 	async function getAsteroidDamage() {
 		isLoading = true;
 		console.log(name + size + location);
 		try {
-			const response = await fetch('/api/info_bot', {
-				method: 'POST',
+			const response = await fetch("/api/info_bot", {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json'
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					name: name,
 					size: size,
-					location: location
-				})
+					location: location,
+				}),
 			});
 
-			if(!response.ok) {
+			if (!response.ok) {
 				throw new Error(`An error occured: ${response.statusText}`);
 			}
 
 			const impactText = await response.text();
 			summary = impactText;
-
 		} catch (e) {
 			console.error(e);
-
 		} finally {
 			isLoading = false;
 		}
 	}
-</script>
 
+	let loccoordnum = $derived([
+		parseFloat(location.split(", ")[0]?.replace("Lng: ", "") ?? "0"),
+		parseFloat(location.split(", ")[1]?.replace("Lat: ", "") ?? "0"),
+	]);
+</script>
 
 <div class="h-screen flex flex-col">
 	<Resizable.PaneGroup
@@ -120,49 +119,38 @@
 		class="w-full rounded-lg border"
 	>
 		<Resizable.Pane defaultSize={75}>
-
 			<Resizable.PaneGroup direction="vertical">
 				<Resizable.Pane defaultSize={50}>
-					<GlobalMap />
+					<GlobalMap bind:coord={loccoordnum} />
 				</Resizable.Pane>
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={50}>
-					<RangeMap 
-						selectedDiameter={selectedDiameter}
-						onMapClick={handleMapClick}
-					/>
+					<RangeMap {selectedDiameter} onMapClick={handleMapClick} />
 				</Resizable.Pane>
 			</Resizable.PaneGroup>
-
 		</Resizable.Pane>
-		
+
 		<Resizable.Handle withHandle />
-		
+
 		<Resizable.Pane defaultSize={40}>
-
 			<Resizable.PaneGroup direction="vertical">
-
 				<Resizable.Pane defaultSize={20}>
 					<div class="flex h-full items-center justify-center p-6">
-						<SimulationSettings 
-							{asteroids} 
+						<SimulationSettings
+							{asteroids}
 							onAsteroidChange={handleAsteroidChange}
 						/>
-						
 					</div>
 				</Resizable.Pane>
 				<button onclick={getAsteroidDamage}> See Impact Results</button>
-				<br>
+				<br />
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={20}>
 					<div class="flex h-full items-center justify-center p-6">
-						<ImpactInfo impactSummary={summary}/>
+						<ImpactInfo impactSummary={summary} />
 					</div>
 				</Resizable.Pane>
-				
 			</Resizable.PaneGroup>
 		</Resizable.Pane>
-		
-
 	</Resizable.PaneGroup>
 </div>

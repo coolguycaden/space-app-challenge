@@ -33,7 +33,7 @@
 </script>
 
 <div class="flex flex-col gap-10">
-    <h1>Simulation Options</h1>
+    <h1 class="font-bold">Simulation Options</h1>
 
     <div class="flex flex-row gap-10">
         <p>Select Asteroid</p>
@@ -55,7 +55,7 @@
             </Select.Content>
         </Select.Root>
     </div>
-    <p>Asteroid Stats</p>
+    <h2 class="font-bold">Asteroid Stats</h2>
     <p>Velocity: {selectedAsteroid.velocity}</p>
     <p>Diameter: {selectedAsteroid.diameter}</p>
     <div class="flex flex-row gap-10">

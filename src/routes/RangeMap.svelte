@@ -12,7 +12,7 @@
 		onMapClick: (coords: { lng: number; lat: number }) => void;
 	} = $props();
 
-	let impactPoint;
+	let impactPoint = $state(null);
 	let showImpact = $state(false);
 		
 	function setImpactPoint(event) {
@@ -61,7 +61,7 @@
 				<CircleLayer
 					id="impact-circle"
 					paint={{
-						'circle-radius': ['get', 'radius'],
+						'circle-radius': 6,
 						'circle-color': ['get', 'color'],
 						'circle-opacity': 0.6
 					}}
