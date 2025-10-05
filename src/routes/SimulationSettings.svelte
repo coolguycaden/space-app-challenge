@@ -7,20 +7,29 @@
     import type { PageProps } from './$types';
     import type { Asteroid } from "./proxy+page.server";
 
+    let { asteroids, onAsteroidChange }: {
+		asteroids: Asteroid[];
+		onAsteroidChange: (asteroid: Asteroid) => void;
+	} = $props();
 
-    let { asteroids }: { asteroid: Asteroid[] } = $props();
-    let selectedAsteroidName = $state("");
+    let selectedAsteroidName = $state(""); 
+	let selectedAsteroid: Asteroid = $derived(
+		asteroids.find((c) => c.fullname === selectedAsteroidName) ?? {
+			velocity: 0,
+			fullname: "",
+			diameter: 0,
+		}
+	)
+    
+    $effect(() => {
+		if (selectedAsteroid.fullname) {
+			onAsteroidChange(selectedAsteroid);
+		}
+	});
+
     const countryTriggerContent = $derived(
-        asteroids.find((c) => c.fullname === selectedAsteroidName)?.fullname ??
-            "Select an asteroid",
-    );
-    let selectedAsteroid: Asteroid = $derived(
-        asteroids.find((c) => c.fullname === selectedAsteroidName) ?? {
-            velocity: 0,
-            fullname: "",
-            diameter: 0,
-        }
-    );
+		selectedAsteroid?.fullname || "Select an asteroid"
+	);
 </script>
 
 <div class="flex flex-col gap-10">

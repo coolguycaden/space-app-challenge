@@ -6,15 +6,14 @@
     
     import type { PageProps } from './$types';
     
-    //let data: {PageProps: } = $props();
-    let damage = "damage"
+    let { impactSummary }: { impactSummary: string } = $props();
 </script>
 
 <div class="flex flex-col gap-10">
     <h1>Impact Summary</h1>
 
     <div class="flex flex-row gap-10">
-        <p>{damage}</p>
+        <p>{impactSummary}</p>
     </div>
 
 </div>

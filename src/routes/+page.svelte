@@ -139,7 +139,7 @@
 				<Resizable.Handle withHandle />
 				<Resizable.Pane defaultSize={20}>
 					<div class="flex h-full items-center justify-center p-6">
-						<ImpactInfo />
+						<ImpactInfo impactSummary={summary}/>
 					</div>
 				</Resizable.Pane>
 				
