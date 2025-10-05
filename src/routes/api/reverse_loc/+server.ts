@@ -5,25 +5,32 @@ export const GET: RequestHandler = async ({ url }) => {
 	const lon = url.searchParams.get("lon") ?? "0";
 
 	const params = new URLSearchParams({
-		lat, lon, format: "json", addressdetails: "1"
+		lat, lon,
+		format: "json",
+		zoom: "10",
 	});
 
 
 	const resp = await fetch(
 		`https://nominatim.openstreetmap.org/reverse?${params.toString()}`,
+		{
+			headers: {
+				accept: 'application/json',
+				'user-agent': 'nasa-webapp/0.0.1'
+			}
+		}
 	);
 
+	console.log(resp)
 	if (!resp.ok) {
-		throw new Error("uho");
-	}
-
-	if (!resp.ok) {
-		throw new Error(`Network response was not ok: ${resp.statusText}`);
+		throw new Error("unable to get data");
 	}
 
 	const data = await resp.json();
 
-	return new Response(data, {
+	console.log(data)
+
+	return new Response(JSON.stringify(data), {
 		status: resp.status,
 	});
 };
