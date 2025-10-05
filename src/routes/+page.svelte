@@ -4,8 +4,6 @@
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
 
-	  import { Button } from "$lib/components/ui/button/index.js";
-
 	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
     import ResizablePaneGroup from "$lib/components/ui/resizable/resizable-pane-group.svelte";
@@ -26,7 +24,6 @@
 		name = asteroid.fullname;
 		size = `${asteroid.diameter.toFixed(2)} meters`;
 		selectedDiameter = asteroid.diameter;
-		console.log(selectedDiameter);
 	}
 
 	function handleMapClick(coords: { lng: number; lat: number }) {
@@ -87,7 +84,7 @@
 	
 	async function getAsteroidDamage() {
 		isLoading = true;
-
+		
 		try {
 			const response = await fetch('/api/info_bot', {
 				method: 'POST',
@@ -115,10 +112,6 @@
 			isLoading = false;
 		}
 	}
-
-	const impactResult = createImpactRadius();
-	initialImpact = impactResult.initialImpact;
-	affectedArea = impactResult.affectedArea;
 </script>
 
 

@@ -14,7 +14,7 @@
 
 	let impactPoint;
 	let showImpact = $state(false);
-
+		
 	function setImpactPoint(event) {
 		if (selectedDiameter === 0) {
 			alert("Please select an asteroid.");
@@ -51,27 +51,13 @@
 	<NavigationControl />
 	<ScaleControl />
 
-	{#if impactPoint}
-	<GeoJSONSource
-		data={{
-			type: "FeatureCollection",
-			features: [impactPoint],
-		}}
-	>
-		{#if initialImpact}
-			<CircleLayer
-				id="impact-circle"
-				paint={{
-					"circle-radius": [
-						"/",
-						["get", "radius"],
-						initialImpact * metersToPixels,
-					],
-					"circle-color": ["get", "color"],
-					"circle-opacity": 0.6,
-				}}
-<<<<<<< HEAD
-			>
+		{#if impactPoint}
+		<GeoJSONSource
+			data={{
+				type: "FeatureCollection",
+				features: [impactPoint],
+			}}
+		>
 				<CircleLayer
 					id="impact-circle"
 					paint={{
@@ -81,22 +67,5 @@
 					}}
 				/>
 			</GeoJSONSource>
-=======
-				filter={['==', '$type', 'Point']}
-			/>
 		{/if}
-
-		{#if affectedArea}
-			<CircleLayer
-				id="affected-area"
-				paint={{
-					"circle-radius": ["*", ["get", "radius"], metersToPixels * affectedArea],
-					"circle-color": ["get", "color"],
-					"circle-opacity": 0.3,
-				}}
-			/>
->>>>>>> 8f6b1fa63b2f31fd95e0f25b1ea82fb49144c903
-		{/if}
-	</GeoJSONSource>
-	{/if}
 </MapLibre>
