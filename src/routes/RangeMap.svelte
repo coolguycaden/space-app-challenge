@@ -4,7 +4,7 @@
 		NavigationControl,
 		ScaleControl,
 		GeoJSONSource,
-		CircleLayer
+		CircleLayer,
 	} from "svelte-maplibre-gl";
 
 	let { selectedDiameter, onMapClick }: {
@@ -27,19 +27,17 @@
 		const pixelRadius = selectedDiameter / 20;
 
 		impactPoint = {
-			type: 'Feature',
+			type: "Feature",
 			geometry: {
-				type: 'Point',
-				coordinates: [lngLat.lng, lngLat.lat]
+				type: "Point",
+				coordinates: [lngLat.lng, lngLat.lat],
 			},
 			properties: {
 				radius: pixelRadius,
 				color: 'red'
 			}
 		};
-		showImpact = !showImpact;
 	}
-
 </script>
 
 <MapLibre
@@ -50,17 +48,29 @@
 	id="map"
 	onclick={(e) => setImpactPoint(e)}
 >
-		
 	<NavigationControl />
 	<ScaleControl />
 
-		
-		{#if showImpact}
-			<GeoJSONSource
-				data={{
-					"type": "FeatureCollection",
-					"features": [impactPoint]
+	{#if impactPoint}
+	<GeoJSONSource
+		data={{
+			type: "FeatureCollection",
+			features: [impactPoint],
+		}}
+	>
+		{#if initialImpact}
+			<CircleLayer
+				id="impact-circle"
+				paint={{
+					"circle-radius": [
+						"/",
+						["get", "radius"],
+						initialImpact * metersToPixels,
+					],
+					"circle-color": ["get", "color"],
+					"circle-opacity": 0.6,
 				}}
+<<<<<<< HEAD
 			>
 				<CircleLayer
 					id="impact-circle"
@@ -71,5 +81,22 @@
 					}}
 				/>
 			</GeoJSONSource>
+=======
+				filter={['==', '$type', 'Point']}
+			/>
 		{/if}
+
+		{#if affectedArea}
+			<CircleLayer
+				id="affected-area"
+				paint={{
+					"circle-radius": ["*", ["get", "radius"], metersToPixels * affectedArea],
+					"circle-color": ["get", "color"],
+					"circle-opacity": 0.3,
+				}}
+			/>
+>>>>>>> 8f6b1fa63b2f31fd95e0f25b1ea82fb49144c903
+		{/if}
+	</GeoJSONSource>
+	{/if}
 </MapLibre>

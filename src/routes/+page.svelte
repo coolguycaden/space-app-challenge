@@ -4,6 +4,8 @@
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
 
+	  import { Button } from "$lib/components/ui/button/index.js";
+
 	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
     import ResizablePaneGroup from "$lib/components/ui/resizable/resizable-pane-group.svelte";
@@ -113,7 +115,12 @@
 			isLoading = false;
 		}
 	}
+
+	const impactResult = createImpactRadius();
+	initialImpact = impactResult.initialImpact;
+	affectedArea = impactResult.affectedArea;
 </script>
+
 
 <div class="h-screen flex flex-col">
 	<Resizable.PaneGroup
