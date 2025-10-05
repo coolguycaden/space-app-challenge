@@ -3,13 +3,13 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import { Slider } from "$lib/components/ui/slider/index.js";
     import { Switch } from "$lib/components/ui/switch/index.js";
-    import type { PageData } from './$types';
+    
+    import type { PageProps } from './$types';
     import type { Asteroid } from "./proxy+page.server";
 
 
-    let data: PageData = $props();
-    let asteroids: Asteroid[] = data.asteroids;
-
+    let { asteroids }: { asteroid: Asteroid[] } = $props();
+    
     let selectedAsteroidName = $state("");
     const countryTriggerContent = $derived(
         asteroids.find((c) => c.fullname === selectedAsteroidName)?.fullname ??

@@ -4,15 +4,12 @@
 	import SimulationSettings from "./SimulationSettings.svelte";
 	import RangeMap from "./RangeMap.svelte";
 
-	import type { PageData } from "./$types";
+	import type { PageData, PageProps } from "./$types";
 	import type { Asteroid } from "./proxy+page.server";
 
-	let data: PageData = $props();
-	let requestData = data.requestData;
-	//let impactResult = impact.result;
-
-	const asteroids: Asteroid[] = [];
-
+	let { data }: PageProps = $props();
+	let asteroids: Asteroid[] = data.asteroids;
+	
 	async function sendRequest() {
 		const paramsObject = {
 			diameter: "true",

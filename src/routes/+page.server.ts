@@ -12,7 +12,6 @@ export const load: PageServerLoad = async ({ params }) => {
 		headers: { authorization: "any" }
 	});
 	const data = await resp.json();
-	// console.log(data);
 
 	// Find field locatoins
 	let i_m = 0;
@@ -40,16 +39,17 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	// Parse asteroid data
 	let asteroids: Asteroid[] = [];
-	// console.log(data['data']);
+	
 	for (let dat of data['data']) {
-		// console.log(dat);
 		asteroids.push({
 			diameter: estimateDiameterM(+dat[i_m]),
 			velocity: +dat[i_v],
 			fullname: dat[i_n],
 		});
 	}
-	// console.log(asteroids);
-	return { asteroids: asteroids };
+	
+	return { 
+		asteroids: asteroids
+	};
 };
 
